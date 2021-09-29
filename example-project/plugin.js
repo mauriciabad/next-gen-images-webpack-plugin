@@ -24,8 +24,8 @@ class MyPlugin {
         },
         (assets) => {
           Object.entries(assets)
-            .filter(([fileName]) => /.html$/i.test(fileName))
-            .forEach(([fileName, source]) => {
+            .filter(([pathname]) => /.html$/i.test(pathname))
+            .forEach(([pathname, source]) => {
               // Only html files
 
               console.log(source)
