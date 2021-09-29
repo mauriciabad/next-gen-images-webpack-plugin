@@ -20,17 +20,23 @@ class MyPlugin {
       compilation.hooks.processAssets.tap(
         {
           name: pluginName,
-
-          stage: compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_SUMMARIZE,
+          stage: compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONS,
         },
         (assets) => {
-          const content =
-            '# In this build:\n\n' +
-            Object.keys(assets)
-              .map((filename) => `- ${filename}`)
-              .join('\n')
+          Object.entries(assets)
+            .filter(([fileName]) => /.html$/i.test(fileName))
+            .forEach(([fileName, source]) => {
+              // Only html files
 
-          compilation.emitAsset(this.options.outputFile, new RawSource(content))
+              console.log(source)
+
+              // TODO: modify the source so it has the picture elem
+            })
+
+          compilation.emitAsset(
+            this.options.outputFile,
+            new RawSource('this is a test')
+          )
         }
       )
     })
