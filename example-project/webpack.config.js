@@ -1,5 +1,5 @@
 const path = require('path')
-const { MyPlugin } = require('./plugin.js')
+const { MyPlugin } = require('./plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 /**
