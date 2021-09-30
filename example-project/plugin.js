@@ -118,8 +118,8 @@ async function replaceImgToPicture(compiler, compilation, html) {
 
     for (const format of ['jxl', 'webp']) {
       const source = document.createElement('source')
+      source.setAttribute('srcset', newImgNames[format])
       source.setAttribute('type', `image/${format}`)
-      source.setAttribute('src', newImgNames[format])
 
       // customSetAttribute(source, img, 'sizes')
       // customSetAttribute(source, img, 'srcset')
