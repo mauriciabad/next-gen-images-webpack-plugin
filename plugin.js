@@ -2,21 +2,21 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { JSDOM } = require('jsdom')
 const { ImagePool } = require('@squoosh/lib')
 
-class MyPlugin {
+class NextGenImagesWebpackPlugin {
   static defaultOptions = {
     outputFile: 'assets.md',
   }
 
   constructor(options = {}) {
-    this.options = { ...MyPlugin.defaultOptions, ...options }
+    this.options = { ...NextGenImagesWebpackPlugin.defaultOptions, ...options }
   }
 
   /** @type {{outputFile: string}}  */
-  options = MyPlugin.defaultOptions
+  options = NextGenImagesWebpackPlugin.defaultOptions
 
   /** @param {import('webpack').Compiler} compiler */
   apply(compiler) {
-    const pluginName = MyPlugin.name
+    const pluginName = NextGenImagesWebpackPlugin.name
 
     compiler.hooks.compilation.tap(pluginName, (compilation) => {
       HtmlWebpackPlugin.getHooks(compilation).beforeEmit.tapPromise(
@@ -154,4 +154,4 @@ async function replaceImgToPicture(compiler, compilation, html) {
 //   }
 // }
 
-module.exports = { MyPlugin }
+module.exports = { NextGenImagesWebpackPlugin }

@@ -1,5 +1,5 @@
 const path = require('path')
-const { MyPlugin } = require('./plugin')
+const { NextGenImagesWebpackPlugin } = require('../plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 /**
@@ -44,7 +44,7 @@ module.exports = {
       template: './src/index.html',
       filename: 'index.html',
     }),
-    new MyPlugin({
+    new NextGenImagesWebpackPlugin({
       outputFile: 'my-assets.md',
     }),
   ],
