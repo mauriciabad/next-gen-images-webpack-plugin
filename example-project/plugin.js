@@ -36,6 +36,16 @@ class MyPlugin {
     const { RawSource } = compiler.webpack.sources
   }
 
+  customSetAttribute(source, img, attr, newAttr) {
+    let value = img.getAttribute(attr)
+    if (value) {
+      source.setAttribute(
+        newAttr || attr,
+        value.replace(/\.(jpe?g|png|gif)/gi, '.webp')
+      )
+    }
+  }
+
   /**
    * @param {string} html
    * @returns {string}
@@ -44,31 +54,18 @@ class MyPlugin {
     const dom = new JSDOM(html)
     const document = dom.window.document
 
-    const images = document.querySelectorAll('img')
-    function __setAttribute(source, img, attr, newAttr) {
-      let value = img.getAttribute(attr)
-      if (value) {
-        source.setAttribute(
-          newAttr || attr,
-          value.replace(/\.(jpe?g|png|gif)/gi, '.webp')
-        )
-      }
-    }
+    const images = document.querySelectorAll(':not(picture) > img')
 
-    for (let i = 0; i < images.length; i++) {
-      const img = images[i]
-      if (img.parentElement && img.parentElement.tagName === 'PICTURE') {
-        continue
-      }
+    for (const img of images) {
       const picture = document.createElement('picture')
       const source = document.createElement('source')
       source.setAttribute('type', 'image/webp')
-      __setAttribute(source, img, 'sizes')
-      __setAttribute(source, img, 'srcset')
-      __setAttribute(source, img, 'media')
+      this.customSetAttribute(source, img, 'sizes')
+      this.customSetAttribute(source, img, 'srcset')
+      this.customSetAttribute(source, img, 'media')
 
       if (!source.hasAttribute('srcset')) {
-        __setAttribute(source, img, 'src', 'srcset')
+        this.customSetAttribute(source, img, 'src', 'srcset')
       }
 
       img.parentElement.insertBefore(picture, img)
