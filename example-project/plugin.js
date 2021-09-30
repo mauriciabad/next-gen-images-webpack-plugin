@@ -1,5 +1,6 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { JSDOM } = require('jsdom')
+const { ImagePool } = require('@squoosh/lib')
 
 class MyPlugin {
   static defaultOptions = {
@@ -18,12 +19,16 @@ class MyPlugin {
     const pluginName = MyPlugin.name
 
     compiler.hooks.compilation.tap(pluginName, (compilation) => {
-      HtmlWebpackPlugin.getHooks(compilation).beforeEmit.tapAsync(
+      HtmlWebpackPlugin.getHooks(compilation).beforeEmit.tapPromise(
         'beforeEmit',
-        (data, callback) => {
-          data.html = this.replaceImgToPicture(compiler, compilation, data.html)
+        async (data) => {
+          data.html = await this.replaceImgToPicture(
+            compiler,
+            compilation,
+            data.html
+          )
 
-          callback(null, data)
+          return data
         }
       )
     })
@@ -42,22 +47,24 @@ class MyPlugin {
   /**
    * @param {import('webpack').Compiler} compiler
    * @param {import('webpack').Compilation} compilation
+   * @param {ImagePool} imagePool
    * @param {HTMLImageElement} img
-   * @returns {string}
+   * @returns {Promise<string>}
    */
-  createNewImageAsset(compiler, compilation, img) {
+  async createNewImageAsset(compiler, compilation, imagePool, img) {
     const { RawSource } = compiler.webpack.sources
 
     const imgPathname = img.getAttribute('src').replace(/^([^\/]*\/)+/g, '')
-    // const newImgPathname = imgPathname.replace(/\.(jpe?g|png|gif)/gi, '.webp')
-    const newImgPathname = 'new-img-' + imgPathname
+    const newImgPathname =
+      'new-img-' + imgPathname.replace(/\.[^\.]+$/i, '.webp')
 
     const originalImgAsset = compilation.getAsset(imgPathname)
-    console.log(originalImgAsset)
 
-    // TODO: here use the squash lib to generate the webp
     // TODO: once the webp is working, do the jxl format
-    const newContent = originalImgAsset.source.source()
+    const newContent = await this.encodeImageToWebP(
+      imagePool,
+      originalImgAsset.source.buffer()
+    )
 
     compilation.emitAsset(newImgPathname, new RawSource(newContent))
 
@@ -65,22 +72,40 @@ class MyPlugin {
   }
 
   /**
+   * @param {ImagePool} imagePool
+   * @param {Buffer} originalImage
+   * @returns {Promise<Buffer>}
+   */
+  async encodeImageToWebP(imagePool, originalImage) {
+    const image = imagePool.ingestImage(originalImage)
+
+    await image.encode({
+      webp: 'auto',
+    })
+    const rawEncodedImage = Buffer.from((await image.encodedWith.webp).binary)
+
+    return rawEncodedImage
+  }
+
+  /**
    * @param {import('webpack').Compiler} compiler
    * @param {import('webpack').Compilation} compilation
    * @param {string} html
-   * @returns {string}
+   * @returns {Promise<string>}
    */
-  replaceImgToPicture(compiler, compilation, html) {
+  async replaceImgToPicture(compiler, compilation, html) {
     const dom = new JSDOM(html)
     const document = dom.window.document
 
     /** @type {HTMLImageElement[]} */
     const images = document.querySelectorAll(':not(picture) > img')
+    const imagePool = new ImagePool()
 
     for (const img of images) {
-      const newImgPathname = this.createNewImageAsset(
+      const newImgPathname = await this.createNewImageAsset(
         compiler,
         compilation,
+        imagePool,
         img
       )
 
@@ -102,6 +127,8 @@ class MyPlugin {
       picture.appendChild(source)
       picture.appendChild(img)
     }
+
+    await imagePool.close()
 
     return document.documentElement.outerHTML
   }
