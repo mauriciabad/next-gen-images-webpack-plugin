@@ -102,7 +102,11 @@ async function replaceImgToPicture(compiler, compilation, html) {
   const document = dom.window.document
 
   /** @type {HTMLImageElement[]} */
-  const imageElements = document.querySelectorAll(':not(picture) > img')
+  const imageElements = Array.from(
+    document.querySelectorAll(':not(picture) > img')
+  ).filter((imageElement) =>
+    /\.(jpg|jpeg|png)$/i.test(imageElement.getAttribute('src'))
+  )
   const imagePool = new ImagePool()
 
   for (const imageElement of imageElements) {
