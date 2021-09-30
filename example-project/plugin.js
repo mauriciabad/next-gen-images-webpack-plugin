@@ -49,42 +49,50 @@ class MyPlugin {
    * @param {import('webpack').Compilation} compilation
    * @param {ImagePool} imagePool
    * @param {HTMLImageElement} img
-   * @returns {Promise<string>}
+   * @returns {Promise<{webp: string, jxl:string}>}
    */
-  async createNewImageAsset(compiler, compilation, imagePool, img) {
+  async createNewImageAssets(compiler, compilation, imagePool, imageElement) {
     const { RawSource } = compiler.webpack.sources
 
-    const imgPathname = img.getAttribute('src').replace(/^([^\/]*\/)+/g, '')
-    const newImgPathname =
-      'new-img-' + imgPathname.replace(/\.[^\.]+$/i, '.webp')
+    const imageName = imageElement
+      .getAttribute('src')
+      .replace(/^([^\/]*\/)+/g, '')
+    const imageNameWithoutExtension = imageName.replace(/\.[^\.]+$/i, '')
+    const newImagesNames = {
+      webp: imageNameWithoutExtension + '.webp',
+      jxl: imageNameWithoutExtension + '.jxl',
+    }
 
-    const originalImgAsset = compilation.getAsset(imgPathname)
+    const image = compilation.getAsset(imageName).source.buffer()
+    const newImages = await this.encodeImageToAllFormats(imagePool, image)
 
-    // TODO: once the webp is working, do the jxl format
-    const newContent = await this.encodeImageToWebP(
-      imagePool,
-      originalImgAsset.source.buffer()
-    )
+    for (const format in newImages) {
+      compilation.emitAsset(
+        newImagesNames[format],
+        new RawSource(newImages[format])
+      )
+    }
 
-    compilation.emitAsset(newImgPathname, new RawSource(newContent))
-
-    return newImgPathname
+    return newImagesNames
   }
 
   /**
    * @param {ImagePool} imagePool
    * @param {Buffer} originalImage
-   * @returns {Promise<Buffer>}
+   * @returns {Promise<{webp: Buffer, jxl:Buffer}>}
    */
-  async encodeImageToWebP(imagePool, originalImage) {
+  async encodeImageToAllFormats(imagePool, originalImage) {
     const image = imagePool.ingestImage(originalImage)
 
     await image.encode({
       webp: 'auto',
+      jxl: 'auto',
     })
-    const rawEncodedImage = Buffer.from((await image.encodedWith.webp).binary)
 
-    return rawEncodedImage
+    return {
+      webp: Buffer.from((await image.encodedWith.webp).binary),
+      jxl: Buffer.from((await image.encodedWith.jxl).binary),
+    }
   }
 
   /**
@@ -98,34 +106,37 @@ class MyPlugin {
     const document = dom.window.document
 
     /** @type {HTMLImageElement[]} */
-    const images = document.querySelectorAll(':not(picture) > img')
+    const imageElements = document.querySelectorAll(':not(picture) > img')
     const imagePool = new ImagePool()
 
-    for (const img of images) {
-      const newImgPathname = await this.createNewImageAsset(
+    for (const imageElement of imageElements) {
+      const newImgNames = await this.createNewImageAssets(
         compiler,
         compilation,
         imagePool,
-        img
+        imageElement
       )
 
       const picture = document.createElement('picture')
+      imageElement.parentElement.insertBefore(picture, imageElement)
 
-      const source = document.createElement('source')
-      source.setAttribute('type', 'image/webp')
-      source.setAttribute('src', newImgPathname)
+      for (const format of ['jxl', 'webp']) {
+        const source = document.createElement('source')
+        source.setAttribute('type', `image/${format}`)
+        source.setAttribute('src', newImgNames[format])
 
-      // this.customSetAttribute(source, img, 'sizes')
-      // this.customSetAttribute(source, img, 'srcset')
-      // this.customSetAttribute(source, img, 'media')
+        // this.customSetAttribute(source, img, 'sizes')
+        // this.customSetAttribute(source, img, 'srcset')
+        // this.customSetAttribute(source, img, 'media')
 
-      // if (!source.hasAttribute('srcset')) {
-      //   this.customSetAttribute(source, img, 'src', 'srcset')
-      // }
+        // if (!source.hasAttribute('srcset')) {
+        //   this.customSetAttribute(source, img, 'src', 'srcset')
+        // }
 
-      img.parentElement.insertBefore(picture, img)
-      picture.appendChild(source)
-      picture.appendChild(img)
+        picture.appendChild(source)
+      }
+
+      picture.appendChild(imageElement)
     }
 
     await imagePool.close()
