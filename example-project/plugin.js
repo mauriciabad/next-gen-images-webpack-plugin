@@ -21,6 +21,7 @@ class MyPlugin {
         {
           name: pluginName,
           stage: compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONS,
+          additionalAssets: true,
         },
         (assets) => {
           Object.entries(assets)
