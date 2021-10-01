@@ -35,7 +35,6 @@ You also need `webpack 5` and `html-webpack-plugin`
 ### Setting up `webpack.config.js`
 
 ```js
-
 const { NextGenImagesWebpackPlugin } = require('next-gen-images-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
