@@ -18,10 +18,7 @@
     "email": "hello@mauriciabad.com",
     "url": "http://mauriciabad.com/"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/mauriciabad/next-gen-images-webpack-plugin.git"
-  },
+  "repository": "github:mauriciabad/next-gen-images-webpack-plugin",
   "homepage": "https://github.com/mauriciabad/next-gen-images-webpack-plugin",
   "bugs": {
     "url": "https://github.com/mauriciabad/next-gen-images-webpack-plugin/issues"
@@ -31,5 +28,6 @@
     "@squoosh/lib": "^0.4.0",
     "html-webpack-plugin": "^5.3.2",
     "jsdom": "^17.0.0"
-  }
+  },
+  "$schema": "https://json.schemastore.org/package"
 }
