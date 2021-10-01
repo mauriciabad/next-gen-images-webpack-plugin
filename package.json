@@ -1,0 +1,15 @@
+{
+  "name": "next-gen-images-webpack-plugin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "plugin.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@squoosh/lib": "^0.4.0",
+    "html-webpack-plugin": "^5.3.2",
+    "jsdom": "^17.0.0"
+  }
+}
