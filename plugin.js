@@ -154,4 +154,4 @@ async function replaceImgToPicture(compiler, compilation, html) {
 //   }
 // }
 
-module.exports = { NextGenImagesWebpackPlugin }
+module.exports = NextGenImagesWebpackPlugin

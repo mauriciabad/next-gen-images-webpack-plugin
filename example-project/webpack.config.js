@@ -1,6 +1,11 @@
 const path = require('path')
-const { NextGenImagesWebpackPlugin } = require('../plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+
+// The plugin is imported from the folder above.
+// Don't import it like this in your project
+const NextGenImagesWebpackPlugin = require('../plugin')
+// In your project, import it like this:
+// const NextGenImagesWebpackPlugin = require('next-gen-images-webpack-plugin')
 
 /**
  * @type {import('webpack').Configuration}

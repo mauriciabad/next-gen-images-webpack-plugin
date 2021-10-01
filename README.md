@@ -20,7 +20,7 @@ This plugin transforms `<img>` tags with images in `jpg`, `jpeg` and `png` to a 
 
 npm:
 ```console
-npm install next-gen-images-webpack-plugin --save
+npm install next-gen-images-webpack-plugin --save-dev
 ```
 
 Yarn:
@@ -35,7 +35,7 @@ You also need `webpack 5` and `html-webpack-plugin`
 ### Setting up `webpack.config.js`
 
 ```js
-const { NextGenImagesWebpackPlugin } = require('next-gen-images-webpack-plugin')
+const NextGenImagesWebpackPlugin = require('next-gen-images-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
