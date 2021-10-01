@@ -5,7 +5,11 @@
   "main": "plugin.js",
   "scripts": {},
   "keywords": [],
-  "author": "",
+  "author": "Maurici Abad Gutierrez",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mauriciabad/next-gen-images-webpack-plugin.git"
+  },
   "license": "MIT",
   "dependencies": {
     "@squoosh/lib": "^0.4.0",
