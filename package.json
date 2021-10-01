@@ -1,14 +1,30 @@
 {
   "name": "next-gen-images-webpack-plugin",
   "version": "1.0.0",
-  "description": "",
+  "description": "Plugin for webpack that converts your images to next gen image formats (JPEG-XL, AVIF, WebP) and puts them in a picture element with fallback to a well supported format",
   "main": "plugin.js",
-  "scripts": {},
-  "keywords": [],
-  "author": "Maurici Abad Gutierrez",
+  "keywords": [
+    "jxl",
+    "jpeg-xl",
+    "webp",
+    "avif",
+    "webpack",
+    "image",
+    "picture",
+    "plugin"
+  ],
+  "author": {
+    "name": "Maurici Abad Gutierrez",
+    "email": "hello@mauriciabad.com",
+    "url": "http://mauriciabad.com/"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/mauriciabad/next-gen-images-webpack-plugin.git"
+  },
+  "homepage": "https://github.com/mauriciabad/next-gen-images-webpack-plugin",
+  "bugs": {
+    "url": "https://github.com/mauriciabad/next-gen-images-webpack-plugin/issues"
   },
   "license": "MIT",
   "dependencies": {
