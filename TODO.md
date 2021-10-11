@@ -1,6 +1,6 @@
 # TODO
 - do tests 
-- publish npm package
+- allow <img> src to have special things like srcset, pixel density or width
 - use browserlist to know if pollifill is needed
-- typescript
+- use typescript
 - add the required dependencies somehow
