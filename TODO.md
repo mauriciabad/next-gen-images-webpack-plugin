@@ -3,7 +3,7 @@
 - allow <img> src to have special things like srcset, pixel density or width
 - use browserlist to know if pollifill is needed
 - use typescript
-- add the required dependencies somehow
+- add the required dependencies somehow (with "peerDependencies" in package.json)
 - Allow more input formats, like gif
 - Enable jxl progresive loading feature
 - share that the plugin exists
