@@ -1,4 +1,5 @@
 # TODO
+
 - do tests and add them to the CI
 - allow <img> src to have special things like srcset, pixel density or width
 - use browserlist to know if pollifill is needed
